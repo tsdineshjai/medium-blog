@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
+import { z } from "zod";
 
 const blog = new Hono<{
 	Bindings: {
@@ -12,6 +13,13 @@ const blog = new Hono<{
 		userId: string;
 	};
 }>();
+
+//creating a post schema using zod
+
+const postSchema = z.object({
+	title: z.string({ message: "title is required" }).max(90),
+	content: z.string({ message: "conntent is required for the post" }),
+});
 
 //middleware
 //objective: trying to check if the user has authorization to retreive a blog / post a blog/ update a blog
@@ -25,7 +33,7 @@ blog.use(async (c, next) => {
 
 	if (!authorizationHeaderValue) {
 		c.status(403);
-		return c.json({ message: "header is authorizd" });
+		return c.json({ message: "auth header is missing" });
 	}
 
 	const extractedTokenFromHeader = authorizationHeaderValue.split(" ")[1];
@@ -37,17 +45,44 @@ blog.use(async (c, next) => {
 		c.status(403);
 		return c.json({ message: "you are unauthorizd" });
 	}
-	//adding a variable userId to the context object of the cloudfare worker
+	//adding a  variable userId to the global context object, so that we can make use of userId when required
+	//generally useful while creating posts where userId is required.
 	c.set("userId", payload.id);
 	await next();
 });
 
-blog.post("/", async (c, next) => {
-	// const prisma = new PrismaClient({
-	// 	datasourceUrl: c.env?.DATABASE_URL,
-	// }).$extends(withAccelerate());
-	console.log(c.get("userId"));
-	return c.text("this is a blog default endpoint of post method ");
+blog.post("/post", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	const userId = c.get("userId");
+
+	const body = await c.req.json();
+	//schema validation
+	const { success } = postSchema.safeParse(body);
+	if (!success) {
+		c.status(411);
+		return c.json({ message: "invalid inputs" });
+	}
+	try {
+		const post = await prisma.post.create({
+			data: {
+				title: body.title,
+				content: body.content,
+				authorId: userId,
+			},
+		});
+		c.status(200);
+		const postStringify = JSON.stringify(post);
+		return c.json({
+			message: "post is successfull created",
+			details: postStringify,
+		});
+	} catch (e) {
+		c.status(411);
+		return c.json({ message: `${e}` });
+	}
 });
 
 blog.put("/", async (c) => {
