@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
-import { z } from "zod";
+import { createPostInput, updatePostInput } from "@tsdjai/common-app";
 
 const blog = new Hono<{
 	Bindings: {
@@ -16,19 +16,11 @@ const blog = new Hono<{
 
 //creating a post schema using zod
 
-const postSchema = z.object({
-	title: z.string({ message: "title is required" }).max(90),
-	content: z.string({ message: "conntent is required for the post" }),
-});
-
 //middleware
 //objective: trying to check if the user has authorization to retreive a blog / post a blog/ update a blog
 //this middleware runs everytime to do ccheck the authorization using the json web token.
 
 blog.use(async (c, next) => {
-	//get c.req.body to get the email info and get the user by findMany method and get the id from the result
-	//and pass on the id by adding the property to it.
-
 	const authorizationHeaderValue = c.req.header("Authorization");
 
 	if (!authorizationHeaderValue) {
@@ -60,7 +52,7 @@ blog.post("/post", async (c) => {
 
 	const body = await c.req.json();
 	//schema validation
-	const { success } = postSchema.safeParse(body);
+	const { success } = createPostInput.safeParse(body);
 	if (!success) {
 		c.status(411);
 		return c.json({ message: "invalid inputs" });
@@ -84,12 +76,6 @@ blog.post("/post", async (c) => {
 	}
 });
 
-const updateBlogSchema = z.object({
-	title: z.string().optional(),
-	content: z.string(),
-	published: z.boolean().optional(),
-	id: z.string(),
-});
 blog.put("/post", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
@@ -98,7 +84,7 @@ blog.put("/post", async (c) => {
 	const body = await c.req.json();
 	const userId = c.get("userId");
 
-	const { success } = updateBlogSchema.safeParse(body);
+	const { success } = updatePostInput.safeParse(body);
 	if (!success) {
 		c.status(403);
 		return c.json({
@@ -128,6 +114,25 @@ blog.put("/post", async (c) => {
 	}
 });
 
+blog.get("/bulk", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	try {
+		const posts = await prisma.post.findMany();
+
+		c.status(200);
+		return c.json({
+			posts,
+		});
+	} catch (e) {
+		c.status(404);
+		return c.json({
+			message: `error occureed: error details: ${e}`,
+		});
+	}
+});
 blog.get("/:id", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
@@ -153,24 +158,5 @@ blog.get("/:id", async (c) => {
 	}
 });
 //api to read all the blogs
-blog.get("/bulk", async (c) => {
-	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL,
-	}).$extends(withAccelerate());
-
-	try {
-		const posts = await prisma.post.findMany();
-
-		c.status(200);
-		return c.json({
-			posts,
-		});
-	} catch (e) {
-		c.status(404);
-		return c.json({
-			message: `error occureed: error details: ${e}`,
-		});
-	}
-});
 
 export default blog;
