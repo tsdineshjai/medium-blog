@@ -85,23 +85,55 @@ blog.post("/post", async (c) => {
 	}
 });
 
-blog.put("/", async (c) => {
+const updateBlogSchema = z.object({
+	title: z.string().optional(),
+	content: z.string(),
+	published: z.boolean().optional(),
+	id: z.string(),
+});
+blog.put("/post", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 
-	return c.text("this is a blog default endpoint of put method ");
+	const body = await c.req.json();
+	const userId = c.get("userId");
+
+	const { success } = updateBlogSchema.safeParse(body);
+	if (!success) {
+		c.status(403);
+		return c.json({
+			message: "schema is invalid",
+		});
+	}
+	try {
+		const updatedBlog = await prisma.post.update({
+			where: {
+				id: body.id, //this is the post id
+				authorId: userId,
+			},
+			data: {
+				title: body.title,
+				content: body.content,
+				published: body.published,
+			},
+		});
+		c.status(200);
+		return c.json({
+			message: "the blog is udpated successfully",
+			updatedContent: updatedBlog.content,
+		});
+	} catch (e) {
+		c.status(411);
+		return c.json({ message: `${e}` });
+	}
 });
 
 blog.get("/:id", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
-	const id = c.req.param("id");
-
-	return c.json({
-		message: id,
-	});
+	const searchQuery = c.req.param("id");
 });
 
 export default blog;
