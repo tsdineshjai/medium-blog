@@ -74,10 +74,9 @@ blog.post("/post", async (c) => {
 			},
 		});
 		c.status(200);
-		const postStringify = JSON.stringify(post);
 		return c.json({
 			message: "post is successfull created",
-			details: postStringify,
+			details: post,
 		});
 	} catch (e) {
 		c.status(411);
@@ -134,7 +133,6 @@ blog.get("/:id", async (c) => {
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 	const searchQuery = c.req.param("id");
-
 	try {
 		const fetchedBlog = await prisma.post.findFirst({
 			where: {
@@ -151,6 +149,26 @@ blog.get("/:id", async (c) => {
 		c.status(404);
 		return c.json({
 			message: `Couldnt find a blog with the given id due to the error ${e}`,
+		});
+	}
+});
+//api to read all the blogs
+blog.get("/bulk", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	try {
+		const posts = await prisma.post.findMany();
+
+		c.status(200);
+		return c.json({
+			posts,
+		});
+	} catch (e) {
+		c.status(404);
+		return c.json({
+			message: `error occureed: error details: ${e}`,
 		});
 	}
 });
