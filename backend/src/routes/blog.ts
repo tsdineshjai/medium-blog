@@ -134,6 +134,25 @@ blog.get("/:id", async (c) => {
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 	const searchQuery = c.req.param("id");
+
+	try {
+		const fetchedBlog = await prisma.post.findFirst({
+			where: {
+				id: searchQuery,
+			},
+		});
+		c.status(411);
+		console.log(fetchedBlog);
+		return c.json({
+			message: "the blog has been fetched successfully",
+			blog: fetchedBlog,
+		});
+	} catch (e) {
+		c.status(404);
+		return c.json({
+			message: `Couldnt find a blog with the given id due to the error ${e}`,
+		});
+	}
 });
 
 export default blog;
