@@ -1,42 +1,34 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { SigninType } from "@tsdjai/common-app";
+import { SignupType } from "@tsdjai/common-app";
 
-function Signin() {
-	const [signInData, setsignInData] = useState<SigninType>({
+function Auth() {
+	const [signupData, setSignupData] = useState<SignupType>({
 		email: "",
 		password: "",
+		name: "",
 	});
 	const navigate = useNavigate();
 	function handleChange(e) {
-		setsignInData({
-			...signInData,
+		setSignupData({
+			...signupData,
 			[e.target.name]: e.target.value,
 		});
 	}
 
-	function handleSubmit() {
-		const userToken = localStorage.get("token");
+	function handleSubmit(e) {
+		e.preventDefault();
 		axios({
-			url: `https://backend.tsdineshjai.workers.dev/api/v1/user/signin`,
+			url: `https://backend.tsdineshjai.workers.dev/api/v1/user/signup`,
 			method: "post",
-			data: signInData,
-			timeout: 1000,
-			responseType: "json",
-			validateStatus: function (status) {
-				return status >= 200 && status < 300;
-			},
-			headers: { Authorization: `Bearer ${userToken}` },
-			maxRedirects: 5,
+			data: signupData,
 		})
 			.then((response) => {
 				if (response.statusText) {
 					const token = response.data;
-					if (token) {
-						console.log(`signin is succesful`);
-					}
-					navigate("/blogs");
+					localStorage.setItem("token", JSON.stringify(token));
+					navigate("/signin");
 					console.log(token);
 				}
 			})
@@ -59,16 +51,16 @@ function Signin() {
 	}
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 h-screen  ">
-			<div className=" mt-20 2xl:w-full">
+			<div className=" mt-30 2xl:w-full">
 				<div className="container text-center p-3 mx-auto ">
 					<h3 className="text-xl pb-1">Create an account</h3>
 					<p className="p-1">
-						Dont have an account?
+						Alreay have an account?
 						<Link
-							to={"/signup"}
+							to="/signin"
 							className="ml-1 underline hover:cursor-pointer hover:font-bold "
 						>
-							SignUp
+							Login
 						</Link>
 					</p>
 				</div>
@@ -77,6 +69,18 @@ function Signin() {
 					onSubmit={handleSubmit}
 					className="flex flex-col  items-center gap-2 w-1/1.5  mx-auto mt-5 "
 				>
+					<label htmlFor="name" className="w-1/2 text-lg ">
+						Username:
+					</label>
+					<input
+						type="text"
+						name="name"
+						id="name"
+						className="w-1/2 rounded-md p-2 text-black"
+						onChange={handleChange}
+						value={signupData.name}
+					/>
+
 					<label htmlFor="email" className="w-1/2 text-lg">
 						Email:
 					</label>
@@ -86,7 +90,7 @@ function Signin() {
 						id="email"
 						className="w-1/2 rounded-md p-2 text-black"
 						onChange={handleChange}
-						pattern="[a-zA-Z0-9._+-%]+@[a-zA-Z._]+\.[a-zA-Z]{2,}"
+						value={signupData.email}
 					/>
 
 					<label htmlFor="password" className="w-1/2 text-lg">
@@ -98,14 +102,14 @@ function Signin() {
 						id="password"
 						className="w-1/2 rounded-md p-2 text-black"
 						onChange={handleChange}
-						pattern=".{6,30}"
+						value={signupData.password}
 					/>
 
 					<button
 						type="submit"
 						className="w-1/2 rounded-md p-2 border-2 mt-5 hover:bg-white hover:text-black "
 					>
-						SignIn
+						SignUp
 					</button>
 				</form>
 			</div>
@@ -122,4 +126,4 @@ function Signin() {
 		</div>
 	);
 }
-export default Signin;
+export default Auth;
