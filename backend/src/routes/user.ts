@@ -35,8 +35,8 @@ user.post("/signup", async (c) => {
 					name: body.name,
 				},
 			});
-			console.log(user);
 			const token = await sign({ id: user.id }, secretKey);
+			c.status(200);
 			return c.text(`${token}`);
 		} catch (e) {
 			c.status(403);
@@ -73,6 +73,7 @@ user.post("/signin", async (c) => {
 			},
 		});
 		c.status(200);
+		c.res.statusText;
 		const token = await sign({ id: user?.id }, secretKey);
 		return c.text(`${token}`);
 	} catch (e) {
