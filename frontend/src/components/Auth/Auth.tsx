@@ -17,25 +17,39 @@ function Auth() {
 		});
 	}
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
 
-		axios({
-			method: "post",
-			url: "https://backend.tsdineshjai.workers.dev/api/v1/user/signup",
-			data: signupData,
-		})
-			.then((response) => {
-				if (response.statusText) {
-					const token = response.data;
-					localStorage.setItem("token", JSON.stringify(token));
-					navigate("/signin");
-					console.log(`navigation has occuurred.`);
-				}
-			})
-			.catch((e) => {
-				console.log(e);
-			});
+		try {
+			const response = await axios.post(
+				"https://backend.tsdineshjai.workers.dev/api/v1/user/signup",
+				signupData
+			);
+			console.log(response);
+			const token = response.data;
+			localStorage.setItem("token", token);
+			navigate("/");
+		} catch (e) {
+			console.log(e);
+		}
+
+		// axios({
+		// 	method: "post",
+		// 	url: "https://backend.tsdineshjai.workers.dev/api/v1/user/signup",
+		// 	data: signupData,
+		// })
+		// 	.then((response) => {
+		// 		console.log(response.statusText);
+		// 		// if (response.status == 200) {
+		// 		// 	const token = response.data;
+		// 		// 	localStorage.setItem("token", JSON.stringify(token));
+		// 		// 	navigate("/signin");
+		// 		// 	console.log(`navigation has occuurred.`);
+		// 		// }
+		// 	})
+		// 	.catch((e) => {
+		// 		console.log(e);
+		// 	});
 
 		setSignupData({
 			email: "",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SigninType } from "@tsdjai/common-app";
 
 function Signin() {
@@ -16,38 +17,42 @@ function Signin() {
 		});
 	}
 
-	function handleSubmit() {
-		axios({
-			url: `https://backend.tsdineshjai.workers.dev/api/v1/user/signin`,
-			method: "post",
-			data: signInData,
-		})
-			.then((response) => {
-				if (response.statusText) {
-					const token = response.data;
-					if (token) {
-						console.log(`signin is succesful`);
-					}
-					navigate("/blog");
-					console.log(token);
-				}
-			})
-			.catch(function (error) {
-				if (error.response) {
-					// The request was made and the server responded with a status code
-					// that falls out of the range of 2xx
-					console.log(error.response.data);
-					console.log(error.response.status);
-					console.log(error.response.headers);
-				} else if (error.request) {
-					// The request was made but no response was received
-					console.log(error.request);
-				} else {
-					// Something happened in setting up the request that triggered an Error
-					console.log("Error", error.message);
-				}
-				console.log(error.config);
-			});
+	async function handleSubmit(e) {
+		e.preventDefault();
+		try {
+			const response = await axios.post(
+				"https://backend.tsdineshjai.workers.dev/api/v1/user/signin",
+				signInData
+			);
+			console.log(response);
+			const token = response.data;
+			console.log(token);
+			navigate("/"); //navigates to home component
+		} catch (e) {
+			console.log(e);
+		}
+		// axios({
+		// 	url: `https://backend.tsdineshjai.workers.dev/api/v1/user/signin`,
+		// 	method: "post",
+		// 	data: {
+		// 		...signInData,
+		// 	},
+		// })
+		// 	.then((response) => {
+		// 		console.log(response.statusText);
+		// 		if (response.status == 200) {
+		// 			console.log("response.statusText =", response.statusText);
+		// 			const token = response.data;
+		// 			if (token) {
+		// 				console.log(`signin is succesful`);
+		// 			}
+		// 			navigate("/blog");
+		// 			console.log(token);
+		// 		}
+		// 	})
+		// 	.catch(function (error) {
+		// 		console.log(error);
+		// 	});
 	}
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 h-screen  ">
@@ -78,7 +83,7 @@ function Signin() {
 						id="email"
 						className="w-1/2 rounded-md p-2 text-black"
 						onChange={handleChange}
-						pattern="[a-zA-Z0-9._+-%]+@[a-zA-Z._]+\.[a-zA-Z]{2,}"
+						value={signInData.email}
 					/>
 
 					<label htmlFor="password" className="w-1/2 text-lg">
@@ -90,7 +95,7 @@ function Signin() {
 						id="password"
 						className="w-1/2 rounded-md p-2 text-black"
 						onChange={handleChange}
-						pattern=".{6,30}"
+						value={signInData.password}
 					/>
 
 					<button
