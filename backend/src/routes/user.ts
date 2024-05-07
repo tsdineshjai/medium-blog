@@ -37,7 +37,7 @@ user.post("/signup", async (c) => {
 			});
 			const token = await sign({ id: user.id }, secretKey);
 			c.status(200);
-			return c.text(`${token}`);
+			return c.json({ token });
 		} catch (e) {
 			c.status(403);
 			return c.json({
@@ -75,7 +75,7 @@ user.post("/signin", async (c) => {
 		c.status(200);
 		c.res.statusText;
 		const token = await sign({ id: user?.id }, secretKey);
-		return c.text(`${token}`);
+		return c.json({ token });
 	} catch (e) {
 		c.status(403);
 		return c.json({ error: "user not found" });
