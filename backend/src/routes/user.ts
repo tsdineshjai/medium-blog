@@ -32,13 +32,18 @@ user.post("/signup", async (c) => {
 				data: {
 					email: body.email,
 					password: body.password,
+					name: body.name,
 				},
 			});
+			console.log(user);
 			const token = await sign({ id: user.id }, secretKey);
 			return c.text(`${token}`);
 		} catch (e) {
 			c.status(403);
-			return c.json({ error: "error while signing up" });
+			return c.json({
+				message: "error while signing up, user might already exists",
+				error: e,
+			});
 		}
 	} else {
 		c.json(411);
