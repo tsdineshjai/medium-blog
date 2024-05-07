@@ -19,9 +19,10 @@ function Auth() {
 
 	function handleSubmit(e) {
 		e.preventDefault();
+
 		axios({
-			url: `https://backend.tsdineshjai.workers.dev/api/v1/user/signup`,
 			method: "post",
+			url: "https://backend.tsdineshjai.workers.dev/api/v1/user/signup",
 			data: signupData,
 		})
 			.then((response) => {
@@ -29,25 +30,18 @@ function Auth() {
 					const token = response.data;
 					localStorage.setItem("token", JSON.stringify(token));
 					navigate("/signin");
-					console.log(token);
+					console.log(`navigation has occuurred.`);
 				}
 			})
-			.catch(function (error) {
-				if (error.response) {
-					// The request was made and the server responded with a status code
-					// that falls out of the range of 2xx
-					console.log(error.response.data);
-					console.log(error.response.status);
-					console.log(error.response.headers);
-				} else if (error.request) {
-					// The request was made but no response was received
-					console.log(error.request);
-				} else {
-					// Something happened in setting up the request that triggered an Error
-					console.log("Error", error.message);
-				}
-				console.log(error.config);
+			.catch((e) => {
+				console.log(e);
 			});
+
+		setSignupData({
+			email: "",
+			password: "",
+			name: "",
+		});
 	}
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 h-screen  ">

@@ -17,18 +17,10 @@ function Signin() {
 	}
 
 	function handleSubmit() {
-		const userToken = localStorage.get("token");
 		axios({
 			url: `https://backend.tsdineshjai.workers.dev/api/v1/user/signin`,
 			method: "post",
 			data: signInData,
-			timeout: 1000,
-			responseType: "json",
-			validateStatus: function (status) {
-				return status >= 200 && status < 300;
-			},
-			headers: { Authorization: `Bearer ${userToken}` },
-			maxRedirects: 5,
 		})
 			.then((response) => {
 				if (response.statusText) {
@@ -36,7 +28,7 @@ function Signin() {
 					if (token) {
 						console.log(`signin is succesful`);
 					}
-					navigate("/blogs");
+					navigate("/blog");
 					console.log(token);
 				}
 			})
