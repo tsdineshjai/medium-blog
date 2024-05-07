@@ -36,7 +36,6 @@ user.post("/signup", async (c) => {
 				},
 			});
 			const token = await sign({ id: user.id }, secretKey);
-			c.status(200);
 			return c.json({ token });
 		} catch (e) {
 			c.status(403);
@@ -72,8 +71,6 @@ user.post("/signin", async (c) => {
 				email: body.email,
 			},
 		});
-		c.status(200);
-		c.res.statusText;
 		const token = await sign({ id: user?.id }, secretKey);
 		return c.json({ token });
 	} catch (e) {
