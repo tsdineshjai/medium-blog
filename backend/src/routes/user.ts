@@ -72,6 +72,7 @@ user.post("/signin", async (c) => {
 				email: body.email,
 			},
 		});
+		c.status(200);
 		const token = await sign({ id: user?.id }, secretKey);
 		return c.text(`${token}`);
 	} catch (e) {
