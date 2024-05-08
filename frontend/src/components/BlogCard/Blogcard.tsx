@@ -1,14 +1,20 @@
+import moment from "moment";
 interface BlogCardProps {
 	title: string;
 	content: string;
 	author: string;
+	publishedDate: string;
 }
 
-function Blogcard({ title, content, author }: BlogCardProps) {
+function Blogcard({ title, content, author, publishedDate }: BlogCardProps) {
+	const dateObj = moment(publishedDate);
+	const date = dateObj.format("YYYY-MM-DD"); // "2024-05-08"
+	const time = dateObj.format("HH:mm:ss"); // "10:23:54"
+
 	return (
 		<div className="grid grid-cols-1 w-1/3 mx-auto pt-3 border-b">
 			<div className="pt-2 pb-2 italic text-sm">
-				<Avatar name={author} small={false} /> {author} &#9679;
+				<Avatar name={author} small={false} /> {author} &#9679; {date} {time}
 			</div>
 			<div className="text-base underline underline-offset-5 hover:cursor-pointer">
 				{title.toUpperCase()}

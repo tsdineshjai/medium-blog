@@ -11,6 +11,8 @@ interface Blog {
 	author: {
 		name: string;
 	};
+	publishedDate: string;
+	id: string;
 }
 
 function useBlogs() {
