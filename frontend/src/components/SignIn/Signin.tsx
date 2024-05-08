@@ -21,13 +21,13 @@ function Signin() {
 		e.preventDefault();
 		try {
 			const response = await axios.post(
-				"https://backend.tsdineshjai.workers.dev/api/v1/user/signin",
+				"http://127.0.0.1:8787/api/v1/user/signin",
 				signInData
 			);
 			console.log(response);
-			const token = response.data;
+			const { token } = response.data;
 			console.log(token);
-			navigate("/"); //navigates to home component
+			navigate("/blog"); //navigates to home component
 		} catch (e) {
 			console.log(e);
 		}

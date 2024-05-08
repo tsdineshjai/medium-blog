@@ -25,10 +25,10 @@ function Auth() {
 				"https://backend.tsdineshjai.workers.dev/api/v1/user/signup",
 				signupData
 			);
-			console.log(response);
-			const token = response.data;
-			localStorage.setItem("token", token);
-			navigate("/");
+			console.log(response, response.statusText);
+			const { token } = response.data;
+			localStorage.setItem("myToken", JSON.stringify(token));
+			navigate("/signin");
 		} catch (e) {
 			console.log(e);
 		}
@@ -40,12 +40,12 @@ function Auth() {
 		// })
 		// 	.then((response) => {
 		// 		console.log(response.statusText);
-		// 		// if (response.status == 200) {
-		// 		// 	const token = response.data;
-		// 		// 	localStorage.setItem("token", JSON.stringify(token));
-		// 		// 	navigate("/signin");
-		// 		// 	console.log(`navigation has occuurred.`);
-		// 		// }
+		// if (response.status == 200) {
+		// 	const token = response.data;
+		// 	localStorage.setItem("token", JSON.stringify(token));
+		// 	navigate("/signin");
+		// 	console.log(`navigation has occuurred.`);
+		// }
 		// 	})
 		// 	.catch((e) => {
 		// 		console.log(e);
