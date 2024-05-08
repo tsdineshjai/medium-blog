@@ -26,27 +26,27 @@ user.post("/signup", async (c) => {
 	const body = await c.req.json();
 	const { success } = signupInput.safeParse(body);
 
-	if (success) {
-		try {
-			const user = await prisma.user.create({
-				data: {
-					email: body.email,
-					password: body.password,
-					name: body.name,
-				},
-			});
-			const token = await sign({ id: user.id }, secretKey);
-			return c.json({ token });
-		} catch (e) {
-			c.status(403);
-			return c.json({
-				message: "error while signing up, user might already exists",
-				error: e,
-			});
-		}
-	} else {
-		c.json(411);
-		return c.json({ message: "invalid inputs from the user" });
+	if (!success) {
+		c.status(403);
+		return c.json({ error: "ivalid schema" });
+	}
+
+	try {
+		const user = await prisma.user.create({
+			data: {
+				email: body.email,
+				password: body.password,
+				name: body.name,
+			},
+		});
+		const token = await sign({ id: user.id }, secretKey);
+		return c.json({ token });
+	} catch (e) {
+		c.status(403);
+		return c.json({
+			message: "error while signing up, user might already exists",
+			error: e,
+		});
 	}
 });
 
