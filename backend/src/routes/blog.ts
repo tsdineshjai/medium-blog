@@ -76,6 +76,7 @@ blog.post("/post", async (c) => {
 	}
 });
 
+//updating a blog
 blog.put("/post", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
@@ -114,6 +115,7 @@ blog.put("/post", async (c) => {
 	}
 });
 
+//to retreive all the blogs
 blog.get("/bulk", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
@@ -125,10 +127,10 @@ blog.get("/bulk", async (c) => {
 				title: true,
 				content: true,
 				id: true,
+				publishedDate: true,
 				author: {
 					select: {
 						name: true,
-						email: true,
 					},
 				},
 			},
@@ -145,6 +147,7 @@ blog.get("/bulk", async (c) => {
 		});
 	}
 });
+
 blog.get("/:id", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
