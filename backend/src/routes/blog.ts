@@ -159,8 +159,6 @@ blog.get("/:id", async (c) => {
 				id: searchQuery,
 			},
 		});
-		c.status(411);
-		console.log(fetchedBlog);
 		return c.json({
 			message: "the blog has been fetched successfully",
 			blog: fetchedBlog,
@@ -168,7 +166,7 @@ blog.get("/:id", async (c) => {
 	} catch (e) {
 		c.status(404);
 		return c.json({
-			message: `Couldnt find a blog with the given id due to the error ${e}`,
+			message: `${e}`,
 		});
 	}
 });
