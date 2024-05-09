@@ -47,3 +47,39 @@ function useBlogs() {
 }
 
 export default useBlogs;
+
+// interface SingleBlog {
+// 	id: string;
+// 	title: string;
+// 	publishedDate: string;
+// 	content: string;
+// 	published: string;
+// }
+export function useBlog(id: string | undefined) {
+	const [loading, setLoading] = useState(true);
+	const [blog, setBlog] = useState({});
+
+	useEffect(() => {
+		axios
+			.get(`https://backend.tsdineshjai.workers.dev/api/v1/blog/${id}`, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("myToken")}`,
+				},
+			})
+			.then((response) => {
+				const blog = response.data.blog;
+				setBlog({
+					...blog,
+				});
+				setLoading(false);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	}, [id]);
+
+	return {
+		loading,
+		blog,
+	};
+}

@@ -2,17 +2,19 @@
 
 import Appbar from "../Appbar/Appbar";
 import Blogcard from "../BlogCard/Blogcard";
+import SkelotonLoading from "../Skeleton/Skeleton";
 import useBlogs from "../hooks/useBlogs";
 
 function Blogs() {
 	const { loading, blogs } = useBlogs();
 
-	console.log(blogs);
-
 	if (loading) {
-		return <h3>Loading....</h3>;
+		return (
+			<h3>
+				<SkelotonLoading />
+			</h3>
+		);
 	}
-
 	return (
 		<div>
 			<Appbar />
@@ -21,6 +23,7 @@ function Blogs() {
 				return (
 					<Blogcard
 						key={id}
+						id={id}
 						author={author?.name}
 						content={content}
 						title={title}

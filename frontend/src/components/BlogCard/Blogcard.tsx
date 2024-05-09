@@ -1,12 +1,20 @@
 import moment from "moment";
+import { Link } from "react-router-dom";
 interface BlogCardProps {
 	title: string;
 	content: string;
 	author: string;
 	publishedDate: string;
+	id: string;
 }
 
-function Blogcard({ title, content, author, publishedDate }: BlogCardProps) {
+function Blogcard({
+	title,
+	content,
+	author,
+	publishedDate,
+	id,
+}: BlogCardProps) {
 	const dateObj = moment(publishedDate);
 	const date = dateObj.format("YYYY-MM-DD"); // "2024-05-08"
 	const time = dateObj.format("HH:mm:ss"); // "10:23:54"
@@ -17,12 +25,11 @@ function Blogcard({ title, content, author, publishedDate }: BlogCardProps) {
 				<Avatar name={author} small={false} /> {author} &#9679; {date} {time}
 			</div>
 			<div className="text-base underline underline-offset-5 hover:cursor-pointer">
-				{title.toUpperCase()}
+				<Link to={`/blog/${id}`}> {title.toUpperCase()}</Link>
 			</div>
-			<div className="text-yellow-300 mb-2 text-sm pt-1">{`${content.slice(
-				0,
-				100
-			)}....`}</div>
+			<div className="text-yellow-300 mb-2 text-sm pt-1">
+				{`${content.slice(0, 100)}....`}
+			</div>
 
 			<div className="text-xs pb-1">
 				{`${Math.ceil(content.length / 100)}`} min read
