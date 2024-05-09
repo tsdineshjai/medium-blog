@@ -5,6 +5,7 @@ import SignIn from "./components/SignIn";
 import Blog from "./components/Blog";
 import Header from "./components/Header";
 import Blogs from "./components/Blogs/Blogs";
+import NewBlog from "./components/CreateBlog/NewBlog";
 
 function App() {
 	return (
@@ -16,6 +17,7 @@ function App() {
 					<Route path="/signin" element={<SignIn />} />
 					<Route path="/blog/:id" element={<Blog />} />
 					<Route path="/blogs" element={<Blogs />} />
+					<Route path="/create" element={<NewBlog />} />
 				</Routes>
 			</Router>
 		</>
