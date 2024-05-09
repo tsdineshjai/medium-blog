@@ -48,16 +48,16 @@ function useBlogs() {
 
 export default useBlogs;
 
-// interface SingleBlog {
-// 	id: string;
-// 	title: string;
-// 	publishedDate: string;
-// 	content: string;
-// 	published: string;
-// }
-export function useBlog(id: string | undefined) {
+interface SingleBlog {
+	id: string;
+	title: string;
+	publishedDate: string;
+	content: string;
+	published: string;
+}
+export function useBlog({ id }: { id: string }) {
 	const [loading, setLoading] = useState(true);
-	const [blog, setBlog] = useState({});
+	const [blog, setBlog] = useState<SingleBlog>();
 
 	useEffect(() => {
 		axios
