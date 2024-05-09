@@ -158,6 +158,17 @@ blog.get("/:id", async (c) => {
 			where: {
 				id: searchQuery,
 			},
+			select: {
+				title: true,
+				content: true,
+				id: true,
+				publishedDate: true,
+				author: {
+					select: {
+						name: true,
+					},
+				},
+			},
 		});
 		return c.json({
 			message: "the blog has been fetched successfully",
