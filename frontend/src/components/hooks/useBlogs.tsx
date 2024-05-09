@@ -53,7 +53,9 @@ interface SingleBlog {
 	title: string;
 	publishedDate: string;
 	content: string;
-	published: string;
+	author: {
+		name: string;
+	};
 }
 export function useBlog({ id }: { id: string }) {
 	const [loading, setLoading] = useState(true);

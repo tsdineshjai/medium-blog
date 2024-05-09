@@ -14,7 +14,8 @@ function Blog() {
 	if (loading || !blog) {
 		return <SkelotonLoading />;
 	}
-	const { title, content, publishedDate } = blog;
+	const { title, content, publishedDate, author } = blog;
+	const { name } = author;
 	const dateObj = moment(publishedDate);
 	const date = dateObj.format("YYYY-MM-DD"); // "2024-05-08"
 	const time = dateObj.format("HH:mm:ss");
@@ -46,7 +47,7 @@ function Blog() {
 						</div>
 					</div>
 					<div className="col-span-4 p-10">
-						<div className="font-mono pb-1">Ram Deiter</div>
+						<div className="font-mono pb-1">{name.toUpperCase()}</div>
 						<div className="flex border-3 gap-3">
 							<div className="flex-one h-3 w-3 bg-yellow-500 rounded-full mt-5 p-2"></div>
 							<div className="flex-auto p-0 m-0">
