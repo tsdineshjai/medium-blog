@@ -21,4 +21,5 @@ exports.createPostInput = zod_1.default.object({
 exports.updatePostInput = zod_1.default.object({
     title: zod_1.default.string().optional(),
     content: zod_1.default.string().optional(),
+    id: zod_1.default.string().optional(),
 });

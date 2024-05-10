@@ -38,11 +38,14 @@ export type CreatePostType = z.infer<typeof createPostInput>;
 export declare const updatePostInput: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
     content: z.ZodOptional<z.ZodString>;
+    id: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     title?: string | undefined;
     content?: string | undefined;
+    id?: string | undefined;
 }, {
     title?: string | undefined;
     content?: string | undefined;
+    id?: string | undefined;
 }>;
 export type UpdatePostType = z.infer<typeof updatePostInput>;
