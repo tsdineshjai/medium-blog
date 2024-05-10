@@ -104,6 +104,7 @@ blog.put("/post", async (c) => {
 				published: body.published,
 			},
 		});
+		console.log(`have reache here`);
 		c.status(200);
 		return c.json({
 			message: "the blog is udpated successfully",
