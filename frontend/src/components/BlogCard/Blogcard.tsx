@@ -19,8 +19,9 @@ function Blogcard({
 	const date = dateObj.format("YYYY-MM-DD"); // "2024-05-08"
 	const time = dateObj.format("HH:mm:ss"); // "10:23:54"
 
+	console.log("the blog uid is", id);
 	return (
-		<div className="grid grid-cols-1 w-1/3 mx-auto pt-3 border-b">
+		<div className="grid grid-cols-1 w-1/3 mx-auto pt-3 border-b mb-2 pb-2">
 			<div className="pt-2 pb-2 italic text-sm">
 				<Avatar name={author} small={false} /> {author} &#9679; {date} {time}
 			</div>
@@ -31,8 +32,22 @@ function Blogcard({
 				{`${content.slice(0, 100)}....`}
 			</div>
 
-			<div className="text-xs pb-1">
+			<div className="flex text-xs pb-1 justify-between items-center">
 				{`${Math.ceil(content.length / 100)}`} min read
+				<span>
+					<button className="border-2 px-2 py-1 rounded-sm hover:bg-black hover:text-white">
+						<Link
+							to="/update"
+							state={{
+								title,
+								content,
+								id,
+							}}
+						>
+							Edit
+						</Link>
+					</button>
+				</span>
 			</div>
 		</div>
 	);
